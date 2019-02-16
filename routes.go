@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/alecj1240/astart/algorithm"
 	"github.com/alecj1240/astart/api"
 )
 
@@ -31,10 +32,12 @@ func Move(res http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Printf("Bad move request: %v", err)
 	}
-	dump(decoded)
+
+	var moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, decoded.Board.Food[0])
+	var finalMove = algorithm.Heading(decoded.You.Body[0], moveCoord[1].Coord)
 
 	respond(res, api.MoveResponse{
-		Move: "down",
+		Move: finalMove,
 	})
 }
 
