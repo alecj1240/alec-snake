@@ -5,14 +5,14 @@ import (
 )
 
 /*
-	G - the amount of steps its taken to get to that square
-	H - the heuristic - estimation from this square to the destination
+	G - the amount of steps its taken to get to that Square
+	H - the heuristic - estimation from this Square to the destination
 	F - the sum of G and H
-	ParentCoords - the coordinates of the previous step (square)
+	ParentCoords - the coordinates of the previous step (Square)
 */
 
 // create struct that will hold: coordinates, G, H, F, parent coords
-type square struct {
+type Square struct {
 	Coord        api.Coord
 	G            int
 	H            int
@@ -30,8 +30,8 @@ func getAdjacentCoords(Location api.Coord) []api.Coord {
 	return adjacentCoords
 }
 
-func removeFromOpenList(removalSquare square, openList []square) []square {
-	var newOpenList = make([]square, 0)
+func removeFromOpenList(removalSquare Square, openList []Square) []Square {
+	var newOpenList = make([]Square, 0)
 	for i := 0; i < len(openList); i++ {
 		if removalSquare.Coord != openList[i].Coord {
 			newOpenList = append(newOpenList, openList[i])
@@ -43,11 +43,11 @@ func removeFromOpenList(removalSquare square, openList []square) []square {
 /*
 the a star algorithm
 */
-func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snake, Destination api.Coord) []square {
-	var closedList = make([]square, 0)
-	var openList = make([]square, 0)
+func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snake, Destination api.Coord) []Square {
+	var closedList = make([]Square, 0)
+	var openList = make([]Square, 0)
 
-	myHead := square{Coord: MySnake.Body[0], G: 0}
+	myHead := Square{Coord: MySnake.Body[0], G: 0}
 	closedList = append(closedList, myHead)
 
 	// get the adjacent coords
@@ -55,11 +55,11 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 
 	for i := 0; i < len(adjacentHead); i++ {
 		if squareBlocked(adjacentHead[i], Snakes) == false && onBoard(adjacentHead[i], BoardHeight, BoardWidth) == true {
-			openList = append(openList, square{
+			openList = append(openList, Square{
 				Coord:        adjacentHead[i],
 				G:            1,
-				H:            manhatten(adjacentHead[i], Destination),
-				F:            1 + manhatten(adjacentHead[i], Destination),
+				H:            Manhatten(adjacentHead[i], Destination),
+				F:            1 + Manhatten(adjacentHead[i], Destination),
 				ParentCoords: MySnake.Body[0],
 			})
 		}
@@ -68,7 +68,7 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 	// TODO: LOOP THROUGH
 	for {
 
-		// find the square the least F on the open list
+		// find the Square the least F on the open list
 		var leastSquare = openList[0]
 		for i := 0; i < len(openList); i++ {
 			if openList[i].F < leastSquare.F {
@@ -79,7 +79,6 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 		if leastSquare.Coord == Destination {
 			break
 		}
-
 		// put it on the closed list
 		closedList = append(closedList, leastSquare)
 
@@ -110,9 +109,7 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 		}
 
 		for i := 0; i < len(leastSquareAdjacents); i++ {
-
 			// 1. If T on the closed list, ignore it
-
 			var onClosedList = false
 			for j := 0; j < len(closedList); j++ {
 				if leastSquareAdjacents[i] == closedList[j].Coord {
@@ -123,20 +120,19 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 			if onClosedList == true {
 				continue
 			}
-
 			// 2. If T is not on the open list add it
 			var onOpenList = false
-			var squaresOnOpenList = make([]square, 0)
+			var SquaresOnOpenList = make([]Square, 0)
 
 			for j := 0; j < len(openList); j++ {
 				if leastSquareAdjacents[i] == openList[j].Coord {
 					onOpenList = true
-					squaresOnOpenList = append(squaresOnOpenList, openList[j])
+					SquaresOnOpenList = append(SquaresOnOpenList, openList[j])
 
-					if (leastSquare.G+1)+manhatten(leastSquareAdjacents[i], Destination) < openList[j].F {
-						openList[j].F = (leastSquare.G + 1) + manhatten(leastSquareAdjacents[i], Destination)
+					if (leastSquare.G+1)+Manhatten(leastSquareAdjacents[i], Destination) < openList[j].F {
+						openList[j].F = (leastSquare.G + 1) + Manhatten(leastSquareAdjacents[i], Destination)
 						openList[j].G = leastSquare.G + 1
-						openList[j].H = manhatten(leastSquareAdjacents[i], Destination)
+						openList[j].H = Manhatten(leastSquareAdjacents[i], Destination)
 						openList[j].ParentCoords = leastSquareAdjacents[i]
 					}
 				}
@@ -145,11 +141,11 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 			// 3. if not on the open list, add it
 			if onOpenList == false {
 				if squareBlocked(leastSquareAdjacents[i], Snakes) == false && onBoard(leastSquareAdjacents[i], BoardHeight, BoardWidth) == true {
-					openList = append(openList, square{
+					openList = append(openList, Square{
 						Coord:        leastSquareAdjacents[i],
 						G:            leastSquare.G + 1,
-						H:            manhatten(leastSquareAdjacents[i], Destination),
-						F:            (leastSquare.G + 1) + (manhatten(leastSquareAdjacents[i], Destination)),
+						H:            Manhatten(leastSquareAdjacents[i], Destination),
+						F:            (leastSquare.G + 1) + (Manhatten(leastSquareAdjacents[i], Destination)),
 						ParentCoords: leastSquare.Coord,
 					})
 				}

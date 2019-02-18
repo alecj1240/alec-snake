@@ -11,7 +11,7 @@ func abs(x int) int {
 	return x
 }
 
-func manhatten(pointA api.Coord, pointB api.Coord) int {
+func Manhatten(pointA api.Coord, pointB api.Coord) int {
 	var manhattenX = abs(pointB.X - pointA.X)
 	var manhattenY = abs(pointB.Y - pointA.Y)
 	var manhattenDistance = manhattenX + manhattenY
@@ -63,4 +63,18 @@ func Heading(startingPoint api.Coord, headingPoint api.Coord) string {
 	}
 
 	return "up"
+}
+
+func NearestFood(FoodCoords []api.Coord, You api.Coord) api.Coord {
+	var nearestFood = FoodCoords[0]
+	var nearestFoodF = Manhatten(FoodCoords[0], You)
+
+	for i := 0; i < len(FoodCoords); i++ {
+		if Manhatten(FoodCoords[i], You) < nearestFoodF {
+			nearestFood = FoodCoords[i]
+			nearestFoodF = Manhatten(FoodCoords[i], You)
+		}
+	}
+
+	return nearestFood
 }
