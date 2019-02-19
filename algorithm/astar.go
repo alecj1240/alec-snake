@@ -77,6 +77,7 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 		}
 
 		if leastSquare.Coord == Destination {
+			closedList = append(closedList, leastSquare)
 			break
 		}
 		// put it on the closed list
@@ -101,6 +102,13 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 		for i := 0; i < len(leastSquareAdjacents); i++ {
 			if leastSquareAdjacents[i] == Destination {
 				destinationFound = true
+				closedList = append(closedList, Square{
+					Coord:        leastSquareAdjacents[i],
+					G:            leastSquare.G + 1,
+					H:            Manhatten(leastSquareAdjacents[i], Destination),
+					F:            (leastSquare.G + 1) + Manhatten(leastSquareAdjacents[i], Destination),
+					ParentCoords: leastSquare.Coord,
+				})
 			}
 		}
 
@@ -152,7 +160,6 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 			}
 
 		}
-
 	}
 	// TODO: END OF LOOP
 

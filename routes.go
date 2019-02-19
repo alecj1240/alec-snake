@@ -36,20 +36,13 @@ func Move(res http.ResponseWriter, req *http.Request) {
 	var moveCoord []algorithm.Square
 
 	// if there is no food chase your tail
-	if len(decoded.Board.Food) < 1 {
-		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, decoded.You.Body[len(decoded.You.Body)-1])
+	if decoded.You.Health > 50 && len(decoded.You.Body) >= 4 {
+		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.ChaseTail(decoded.You.Body))
 	} else {
 		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.NearestFood(decoded.Board.Food, decoded.You.Body[0]))
 	}
 
-	var finalMove string
-
-	// if the food is right next to you, just head to that
-	if algorithm.Manhatten(decoded.You.Body[0], algorithm.NearestFood(decoded.Board.Food, decoded.You.Body[0])) == 1 {
-		finalMove = algorithm.Heading(decoded.You.Body[0], algorithm.NearestFood(decoded.Board.Food, decoded.You.Body[0]))
-	} else {
-		finalMove = algorithm.Heading(decoded.You.Body[0], moveCoord[1].Coord)
-	}
+	var finalMove = algorithm.Heading(decoded.You.Body[0], moveCoord[1].Coord)
 
 	respond(res, api.MoveResponse{
 		Move: finalMove,

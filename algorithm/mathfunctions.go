@@ -4,6 +4,24 @@ import (
 	"github.com/alecj1240/astart/api"
 )
 
+func ChaseTail(You []api.Coord) api.Coord {
+	var heading = Heading(You[len(You)-1], You[len(You)-2])
+
+	switch heading {
+	case "up":
+		return api.Coord{X: You[len(You)-1].X, Y: (You[len(You)-1].Y + 1)}
+	case "down":
+		return api.Coord{X: You[len(You)-1].X, Y: (You[len(You)-1].Y - 1)}
+	case "left":
+		return api.Coord{X: You[len(You)-1].X + 1, Y: You[len(You)-1].Y}
+	case "right":
+		return api.Coord{X: You[len(You)-1].X - 1, Y: You[len(You)-1].Y}
+	default:
+		return You[len(You)-1]
+	}
+
+}
+
 func abs(x int) int {
 	if x < 0 {
 		return -x
@@ -37,6 +55,10 @@ func squareBlocked(point api.Coord, Snakes []api.Snake) bool {
 	for i := 0; i < len(Snakes); i++ {
 		for j := 0; j < len(Snakes[i].Body); j++ {
 			if Snakes[i].Body[j].X == point.X && Snakes[i].Body[j].Y == point.Y {
+				if len(Snakes[i].Body)-1 == j {
+					return false
+				}
+
 				return true
 			}
 		}
