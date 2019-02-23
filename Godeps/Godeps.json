@@ -1,0 +1,6 @@
+{
+	"ImportPath": "github.com/alecj1240/astart",
+	"GoVersion": "go1.10",
+	"GodepVersion": "v80",
+	"Deps": []
+}

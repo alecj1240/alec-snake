@@ -1,1 +1,1 @@
-web: battlesnake-go
+web: astart
