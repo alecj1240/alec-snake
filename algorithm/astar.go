@@ -54,7 +54,7 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 	var adjacentHead = getAdjacentCoords(MySnake.Body[0])
 
 	for i := 0; i < len(adjacentHead); i++ {
-		if squareBlocked(adjacentHead[i], Snakes) == false && onBoard(adjacentHead[i], BoardHeight, BoardWidth) == true {
+		if squareBlocked(adjacentHead[i], Snakes) == false && onBoard(adjacentHead[i], BoardHeight, BoardWidth) {
 			openList = append(openList, Square{
 				Coord:        adjacentHead[i],
 				G:            1,
@@ -67,7 +67,6 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 
 	// TODO: LOOP THROUGH
 	for {
-
 		// find the Square the least F on the open list
 		var leastSquare = openList[0]
 		for i := 0; i < len(openList); i++ {
@@ -78,6 +77,7 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 
 		if leastSquare.Coord == Destination {
 			closedList = append(closedList, leastSquare)
+			openList = removeFromOpenList(leastSquare, openList)
 			break
 		}
 		// put it on the closed list
@@ -162,6 +162,5 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 		}
 	}
 	// TODO: END OF LOOP
-
 	return closedList // [1].Coord
 }

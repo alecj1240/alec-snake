@@ -5,21 +5,7 @@ import (
 )
 
 func ChaseTail(You []api.Coord) api.Coord {
-	var heading = Heading(You[len(You)-1], You[len(You)-2])
-
-	switch heading {
-	case "up":
-		return api.Coord{X: You[len(You)-1].X, Y: (You[len(You)-1].Y + 1)}
-	case "down":
-		return api.Coord{X: You[len(You)-1].X, Y: (You[len(You)-1].Y - 1)}
-	case "left":
-		return api.Coord{X: You[len(You)-1].X + 1, Y: You[len(You)-1].Y}
-	case "right":
-		return api.Coord{X: You[len(You)-1].X - 1, Y: You[len(You)-1].Y}
-	default:
-		return You[len(You)-1]
-	}
-
+	return You[len(You)-1]
 }
 
 func abs(x int) int {
@@ -37,11 +23,7 @@ func Manhatten(pointA api.Coord, pointB api.Coord) int {
 }
 
 func onBoard(square api.Coord, boardHeight int, boardWidth int) bool {
-	if square.X >= 0 || square.X < boardWidth {
-		return true
-	}
-
-	if square.Y >= 0 || square.Y < boardHeight {
+	if square.X >= 0 && square.X < boardWidth && square.Y >= 0 && square.Y < boardHeight {
 		return true
 	}
 
