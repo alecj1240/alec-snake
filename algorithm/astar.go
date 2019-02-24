@@ -1,8 +1,6 @@
 package algorithm
 
 import (
-	"log"
-
 	"github.com/alecj1240/astart/api"
 )
 
@@ -73,77 +71,77 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 	for len(openList) > 0 {
 
 		// find the Square the least F on the open list
-		var leastSquare = openList[0]
-		for i := 0; i < len(openList); i++ {
-			if openList[i].F < leastSquare.F {
-				leastSquare = openList[i]
+		var closeSquare = openList[0]
+		for _, openItem := range openList {
+			if openItem.F < closeSquare.F {
+				closeSquare = openItem
 			}
 		}
 
 		// put it on the closed list
-		closedList[leastSquare.Coord] = true
-		openList = removeFromOpenList(leastSquare, openList)
+		closedList[closeSquare.Coord] = true
+		openList = removeFromOpenList(closeSquare, openList)
 		// loop through leastSquares's adjacent tiles -- call them T
-		var leastSquareAdjacents = getAdjacentCoords(leastSquare.Coord)
+		closeNeighbours := getAdjacentCoords(closeSquare.Coord)
 
-		for _, neighbour := range leastSquareAdjacents {
-
-			if neighbour == Destination {
-
-				closedList[neighbour] = true
-
-				var path = make([]api.Coord, 0)
-				path = append(path, neighbour)
-				current := leastSquare.Coord
-				path = append(path, current)
-
-				for j := 0; j < len(closedList); j++ {
-					if current == MySnake.Body[0] {
-						return ReversePath(path)
-					}
-					current := cameFrom[current]
-					path = append(path, current)
-				}
-			}
+		for _, neighbour := range closeNeighbours {
 
 			// 1. If T on the closed list, ignore it
 			if closedList[neighbour] {
 				continue
 			}
 
+			if neighbour == Destination {
+
+				closedList[neighbour] = true
+
+				path := make([]api.Coord, 0)
+				path = append(path, Destination)
+				path = append(path, neighbour)
+				current := closeSquare.Coord
+				path = append(path, current)
+
+				_, exists := cameFrom[current]
+
+				for ; exists; _, exists = cameFrom[current] {
+					current = cameFrom[current]
+					path = append(path, current)
+				}
+
+				return ReversePath(path)
+			}
+
 			// 2. If T is not on the open list add it
 			for _, item := range openList {
-				log.Printf("PLEASE ENTER HERE")
 				if neighbour == item.Coord {
 					if squareBlocked(neighbour, Snakes) == false && onBoard(neighbour, BoardHeight, BoardWidth) {
-						if (leastSquare.G+1)+Manhatten(neighbour, Destination) < item.F {
-							item.F = (leastSquare.G + 1) + Manhatten(neighbour, Destination)
-							item.G = leastSquare.G + 1
+						if (closeSquare.G+1)+Manhatten(neighbour, Destination) < item.F {
+							item.F = (closeSquare.G + 1) + Manhatten(neighbour, Destination)
+							item.G = closeSquare.G + 1
 							item.H = Manhatten(neighbour, Destination)
 							item.ParentCoords = neighbour
 
-							cameFrom[item.Coord] = leastSquare.Coord
+							cameFrom[item.Coord] = closeSquare.Coord
 						}
 					}
 				}
-
-				if squareBlocked(neighbour, Snakes) == false && onBoard(neighbour, BoardHeight, BoardWidth) {
-					var openSquare = Square{
-						Coord:        neighbour,
-						G:            leastSquare.G + 1,
-						H:            Manhatten(neighbour, Destination),
-						F:            (leastSquare.G + 1) + (Manhatten(neighbour, Destination)),
-						ParentCoords: leastSquare.Coord,
-					}
-					cameFrom[neighbour] = leastSquare.Coord
-					openList = appendList(openSquare, Snakes, openList, BoardHeight, BoardWidth)
-				}
-
 			}
+
+			var openSquare = Square{
+				Coord:        neighbour,
+				G:            closeSquare.G + 1,
+				H:            Manhatten(neighbour, Destination),
+				F:            (closeSquare.G + 1) + (Manhatten(neighbour, Destination)),
+				ParentCoords: closeSquare.Coord,
+			}
+
+			cameFrom[neighbour] = closeSquare.Coord
+			openList = appendList(openSquare, Snakes, openList, BoardHeight, BoardWidth)
 
 		}
 
 	}
 
 	return nil
+
 }
