@@ -1,8 +1,6 @@
 package algorithm
 
 import (
-	"log"
-
 	"github.com/alecj1240/astart/api"
 )
 
@@ -43,10 +41,8 @@ func removeFromOpenList(removalSquare Square, openList []Square) []Square {
 }
 
 func appendList(appendingSquare Square, Snakes []api.Snake, List []Square, BoardHeight int, BoardWidth int) []Square {
-	if squareBlocked(appendingSquare.Coord, Snakes) == false {
-		if onBoard(appendingSquare.Coord, BoardHeight, BoardWidth) {
-			List = append(List, appendingSquare)
-		}
+	if squareBlocked(appendingSquare.Coord, Snakes) == false && onBoard(appendingSquare.Coord, BoardHeight, BoardWidth) {
+		List = append(List, appendingSquare)
 	}
 
 	return List
@@ -76,9 +72,9 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 
 		openList = appendList(newSquare, Snakes, openList, BoardHeight, BoardWidth)
 	}
-	log.Printf("OPEN LIST: %v", openList)
+
 	// TODO: LOOP THROUGH
-	for {
+	for len(openList) > 0 {
 		// find the Square the least F on the open list
 		var leastSquare = openList[0]
 		for i := 0; i < len(openList); i++ {
