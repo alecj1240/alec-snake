@@ -40,6 +40,16 @@ func removeFromOpenList(removalSquare Square, openList []Square) []Square {
 	return newOpenList
 }
 
+func appendOpenList(appendingSquare Square, Snakes []api.Snake, openList []Square, BoardHeight int, BoardWidth int) []Square {
+	if squareBlocked(appendingSquare.Coord, Snakes) == false {
+		if onBoard(appendingSquare.Coord, BoardHeight, BoardWidth) {
+			openList = append(openList, appendingSquare)
+		}
+	}
+
+	return openList
+}
+
 /*
 the a star algorithm
 */
@@ -47,7 +57,7 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 	var closedList = make([]Square, 0)
 	var openList = make([]Square, 0)
 
-	myHead := Square{Coord: MySnake.Body[0], G: 0}
+	myHead := Square{Coord: MySnake.Body[0], G: 0, H: 0, F: 0}
 	closedList = append(closedList, myHead)
 
 	// get the adjacent coords
@@ -148,7 +158,7 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 
 			// 3. if not on the open list, add it
 			if onOpenList == false {
-				if squareBlocked(leastSquareAdjacents[i], Snakes) == false && onBoard(leastSquareAdjacents[i], BoardHeight, BoardWidth) == true {
+				if squareBlocked(leastSquareAdjacents[i], Snakes) == false && onBoard(leastSquareAdjacents[i], BoardHeight, BoardWidth) {
 					openList = append(openList, Square{
 						Coord:        leastSquareAdjacents[i],
 						G:            leastSquare.G + 1,

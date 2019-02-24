@@ -82,3 +82,26 @@ func NearestFood(FoodCoords []api.Coord, You api.Coord) api.Coord {
 
 	return nearestFood
 }
+
+// func NearestSnake(Snakes []api.Snake, You api.Snake) api.Coord {
+// 	var nearestSnake = Snakes[0]
+// 	var nearestSnakeDistance = Manhatten(Snakes[0].Body[0], You.Body[0])
+
+// 	if Snakes[0].Body[0] == You.Body[0] {
+// 		var nearestSnake = Snakes[1]
+// 		var nearestSnakeDistance = Manhatten(Snakes[1].Body[0], You.Body[0])
+// 	}
+
+// 	for i := 0; i < len(Snakes); i++ {
+// 		if Manhatten(Snakes[i].Body[0], You.Body[0]) < nearestSnakeDistance {
+// 			if Snakes[i].Body[0] == You.Body[0] {
+// 				continue
+// 			}
+
+// 			nearestSnake = Snakes[i]
+// 			nearestSnakeDistance = Manhatten(Snakes[i].Body[0], You.Body[0])
+// 		}
+// 	}
+
+// 	return nearestSnake.Body[0]
+// }
