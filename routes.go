@@ -33,16 +33,21 @@ func Move(res http.ResponseWriter, req *http.Request) {
 		log.Printf("Bad move request: %v", err)
 	}
 
-	var moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.NearestFood(decoded.Board.Food, decoded.You.Body[0]))
+	var moveCoord []api.Coord
 	// if there is no food chase your tail
 	if decoded.You.Health > 30 && len(decoded.You.Body) >= 7 {
 		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.ChaseTail(decoded.You.Body))
+	} else {
+		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.NearestFood(decoded.Board.Food, decoded.You.Body[0]))
 	}
 
-	var finalMove = algorithm.Heading(decoded.You.Body[0], moveCoord[1].Coord)
+	//	var finalMove = algorithm.Heading(decoded.You.Body[0], moveCoord[1])
+	if len(moveCoord) == 1 {
+
+	}
 
 	respond(res, api.MoveResponse{
-		Move: finalMove,
+		Move: "up",
 	})
 }
 
