@@ -35,7 +35,7 @@ func Move(res http.ResponseWriter, req *http.Request) {
 
 	var moveCoord []api.Coord
 	// if there is no food chase your tail
-	if decoded.You.Health > 30 && len(decoded.You.Body) >= 7 {
+	if decoded.You.Health > 30 && (len(decoded.You.Body) >= 7 || len(decoded.Board.Food) == 0) {
 		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.ChaseTail(decoded.You.Body))
 	} else {
 		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.NearestFood(decoded.Board.Food, decoded.You.Body[0]))
