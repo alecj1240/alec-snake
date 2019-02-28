@@ -4,6 +4,7 @@ import (
 	"github.com/alecj1240/astart/api"
 )
 
+// ChaseTail returns the coordinate of the position behind my tail
 func ChaseTail(You []api.Coord) api.Coord {
 	return You[len(You)-1]
 }
@@ -15,6 +16,7 @@ func abs(x int) int {
 	return x
 }
 
+// Manhatten gives the difference between two points
 func Manhatten(pointA api.Coord, pointB api.Coord) int {
 	var manhattenX = abs(pointB.X - pointA.X)
 	var manhattenY = abs(pointB.Y - pointA.Y)
@@ -22,6 +24,7 @@ func Manhatten(pointA api.Coord, pointB api.Coord) int {
 	return manhattenDistance
 }
 
+// determines if the square is actually on the board
 func onBoard(square api.Coord, boardHeight int, boardWidth int) bool {
 	if square.X >= 0 && square.X < boardWidth && square.Y >= 0 && square.Y < boardHeight {
 		return true
@@ -30,9 +33,7 @@ func onBoard(square api.Coord, boardHeight int, boardWidth int) bool {
 	return false
 }
 
-/*
-	Determines if a snake is blocking the square
-*/
+// determines if the square is blocked by a snake
 func squareBlocked(point api.Coord, Snakes []api.Snake) bool {
 	for i := 0; i < len(Snakes); i++ {
 		for j := 0; j < len(Snakes[i].Body); j++ {
@@ -49,9 +50,7 @@ func squareBlocked(point api.Coord, Snakes []api.Snake) bool {
 	return false
 }
 
-/*
-Determines the heading between two points - must be side by side
-*/
+// Heading determines the direction between two points - must be side by side
 func Heading(startingPoint api.Coord, headingPoint api.Coord) string {
 	if headingPoint.X > startingPoint.X {
 		return "right"
@@ -69,6 +68,7 @@ func Heading(startingPoint api.Coord, headingPoint api.Coord) string {
 	return "up"
 }
 
+// NearestFood finds the closest food to the head of my snake
 func NearestFood(FoodCoords []api.Coord, You api.Coord) api.Coord {
 	var nearestFood = FoodCoords[0]
 	var nearestFoodF = Manhatten(FoodCoords[0], You)
@@ -83,25 +83,26 @@ func NearestFood(FoodCoords []api.Coord, You api.Coord) api.Coord {
 	return nearestFood
 }
 
-// func NearestSnake(Snakes []api.Snake, You api.Snake) api.Coord {
-// 	var nearestSnake = Snakes[0]
-// 	var nearestSnakeDistance = Manhatten(Snakes[0].Body[0], You.Body[0])
+// NearestSnake determines the nearest snake on the board based on the head of the snake
+func NearestSnake(Snakes []api.Snake, You api.Snake) api.Coord {
+	var nearestSnake = Snakes[0]
+	var nearestSnakeDistance = Manhatten(Snakes[0].Body[0], You.Body[0])
 
-// 	if Snakes[0].Body[0] == You.Body[0] {
-// 		var nearestSnake = Snakes[1]
-// 		var nearestSnakeDistance = Manhatten(Snakes[1].Body[0], You.Body[0])
-// 	}
+	if Snakes[0].Body[0] == You.Body[0] {
+		nearestSnake = Snakes[1]
+		nearestSnakeDistance = Manhatten(Snakes[1].Body[0], You.Body[0])
+	}
 
-// 	for i := 0; i < len(Snakes); i++ {
-// 		if Manhatten(Snakes[i].Body[0], You.Body[0]) < nearestSnakeDistance {
-// 			if Snakes[i].Body[0] == You.Body[0] {
-// 				continue
-// 			}
+	for i := 0; i < len(Snakes); i++ {
+		if Manhatten(Snakes[i].Body[0], You.Body[0]) < nearestSnakeDistance {
+			if Snakes[i].Body[0] == You.Body[0] {
+				continue
+			}
 
-// 			nearestSnake = Snakes[i]
-// 			nearestSnakeDistance = Manhatten(Snakes[i].Body[0], You.Body[0])
-// 		}
-// 	}
+			nearestSnake = Snakes[i]
+			nearestSnakeDistance = Manhatten(Snakes[i].Body[0], You.Body[0])
+		}
+	}
 
-// 	return nearestSnake.Body[0]
-// }
+	return nearestSnake.Body[0]
+}

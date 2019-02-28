@@ -11,7 +11,7 @@ import (
 	ParentCoords - the coordinates of the previous step (Square)
 */
 
-// create struct that will hold: coordinates, G, H, F, parent coords
+// Square holds: coordinates, G, H, F, parent coords
 type Square struct {
 	Coord        api.Coord
 	G            int
@@ -48,22 +48,20 @@ func appendList(appendingSquare Square, Snakes []api.Snake, List []Square, Board
 	return List
 }
 
-func ReversePath(path []api.Coord) []api.Coord {
-	for i := 0; i < len(path)/2; i++ {
-		j := len(path) - i - 1
-		path[i], path[j] = path[j], path[i]
+// reverseCoords reverses the path of coordinates so it's in chronological order
+func reverseCoords(path []api.Coord) []api.Coord {
+	for a := 0; a < len(path)/2; a++ {
+		b := len(path) - a - 1
+		path[a], path[b] = path[b], path[a]
 	}
 	return path
 }
 
-/*
-the a star algorithm
-*/
+// Astar determines the best path to a point on the board.
 func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snake, Destination api.Coord) []api.Coord {
 	closedList := make(map[api.Coord]bool)
 	openList := make([]Square, 0)
-
-	cameFrom := make(map[api.Coord]api.Coord)
+	pathTracker := make(map[api.Coord]api.Coord)
 
 	myHead := Square{Coord: MySnake.Body[0], G: 0, H: 0, F: 0}
 	openList = append(openList, myHead)
@@ -101,14 +99,14 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 				current := closeSquare.Coord
 				path = append(path, current)
 
-				_, exists := cameFrom[current]
+				_, pathway := pathTracker[current]
 
-				for ; exists; _, exists = cameFrom[current] {
-					current = cameFrom[current]
+				for ; pathway; _, pathway = pathTracker[current] {
+					current = pathTracker[current]
 					path = append(path, current)
 				}
 
-				return ReversePath(path)
+				return reverseCoords(path)
 			}
 
 			// 2. If T is not on the open list add it
@@ -121,7 +119,7 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 							item.H = Manhatten(neighbour, Destination)
 							item.ParentCoords = neighbour
 
-							cameFrom[item.Coord] = closeSquare.Coord
+							pathTracker[item.Coord] = closeSquare.Coord
 						}
 					}
 				}
@@ -135,7 +133,7 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 				ParentCoords: closeSquare.Coord,
 			}
 
-			cameFrom[neighbour] = closeSquare.Coord
+			pathTracker[neighbour] = closeSquare.Coord
 			openList = appendList(openSquare, Snakes, openList, BoardHeight, BoardWidth)
 
 		}
