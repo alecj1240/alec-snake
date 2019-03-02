@@ -47,6 +47,10 @@ func squareBlocked(point api.Coord, Snakes []api.Snake) bool {
 		}
 	}
 
+	if HeadOnCollision(point, Snakes) {
+		return true
+	}
+
 	return false
 }
 
@@ -90,8 +94,10 @@ func HeadOnCollision(Destination api.Coord, Snakes []api.Snake) bool {
 
 	for i := 0; i < len(Snakes); i++ {
 		for j := 0; j < len(destinationAdjacents); j++ {
-			if Snakes[i].Body[j] == destinationAdjacents[j] {
-				dangerousSnakes = append(dangerousSnakes, Snakes[i])
+			if Snakes[i].Body[0] == destinationAdjacents[j] {
+				if Snakes[i].Name != "Alec" {
+					dangerousSnakes = append(dangerousSnakes, Snakes[i])
+				}
 			}
 		}
 	}

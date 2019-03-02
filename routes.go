@@ -41,7 +41,7 @@ func Move(res http.ResponseWriter, req *http.Request) {
 		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.NearestFood(decoded.Board.Food, decoded.You.Body[0]))
 	}
 
-	finalMove := algorithm.Heading(decoded.You.Body[0], moveCoord[1])
+	var finalMove = algorithm.Heading(decoded.You.Body[0], moveCoord[1])
 
 	respond(res, api.MoveResponse{
 		Move: finalMove,
