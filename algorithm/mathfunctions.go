@@ -25,7 +25,7 @@ func Manhatten(pointA api.Coord, pointB api.Coord) int {
 }
 
 // determines if the square is actually on the board
-func onBoard(square api.Coord, boardHeight int, boardWidth int) bool {
+func OnBoard(square api.Coord, boardHeight int, boardWidth int) bool {
 	if square.X >= 0 && square.X < boardWidth && square.Y >= 0 && square.Y < boardHeight {
 		return true
 	}
@@ -34,7 +34,7 @@ func onBoard(square api.Coord, boardHeight int, boardWidth int) bool {
 }
 
 // determines if the square is blocked by a snake
-func squareBlocked(point api.Coord, Snakes []api.Snake) bool {
+func SquareBlocked(point api.Coord, Snakes []api.Snake) bool {
 	for i := 0; i < len(Snakes); i++ {
 		for j := 0; j < len(Snakes[i].Body); j++ {
 			if Snakes[i].Body[j].X == point.X && Snakes[i].Body[j].Y == point.Y {
@@ -46,10 +46,6 @@ func squareBlocked(point api.Coord, Snakes []api.Snake) bool {
 			}
 		}
 	}
-
-	// if HeadOnCollision(point, Snakes) {
-	// 	return true
-	// }
 
 	return false
 }
@@ -85,4 +81,28 @@ func NearestFood(FoodCoords []api.Coord, You api.Coord) api.Coord {
 	}
 
 	return nearestFood
+}
+
+// HeadOnCollision determines the nearest snake on the board based on the head of the snake
+func HeadOnCollision(Destination api.Coord, Snakes []api.Snake) bool {
+	var dangerousSnakes []api.Snake
+	destinationAdjacents := GetAdjacentCoords(Destination)
+
+	for i := 0; i < len(Snakes); i++ {
+		for j := 0; j < len(destinationAdjacents); j++ {
+			if Snakes[i].Body[0] == destinationAdjacents[j] {
+				if Snakes[i].Name != "Crutches" {
+					dangerousSnakes = append(dangerousSnakes, Snakes[i])
+				}
+			}
+		}
+	}
+
+	for i := 0; i < len(dangerousSnakes); i++ {
+		if Heading(dangerousSnakes[i].Body[0], Destination) == Heading(dangerousSnakes[i].Body[1], dangerousSnakes[i].Body[0]) {
+			return true
+		}
+	}
+
+	return false
 }

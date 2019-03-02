@@ -20,7 +20,7 @@ type Square struct {
 	ParentCoords api.Coord
 }
 
-func getAdjacentCoords(Location api.Coord) []api.Coord {
+func GetAdjacentCoords(Location api.Coord) []api.Coord {
 	var adjacentCoords = make([]api.Coord, 0)
 	adjacentCoords = append(adjacentCoords, api.Coord{X: Location.X + 1, Y: Location.Y})
 	adjacentCoords = append(adjacentCoords, api.Coord{X: Location.X - 1, Y: Location.Y})
@@ -41,7 +41,7 @@ func removeFromOpenList(removalSquare Square, openList []Square) []Square {
 }
 
 func appendList(appendingSquare Square, Snakes []api.Snake, List []Square, BoardHeight int, BoardWidth int) []Square {
-	if squareBlocked(appendingSquare.Coord, Snakes) == false && onBoard(appendingSquare.Coord, BoardHeight, BoardWidth) {
+	if SquareBlocked(appendingSquare.Coord, Snakes) == false && OnBoard(appendingSquare.Coord, BoardHeight, BoardWidth) {
 		List = append(List, appendingSquare)
 	}
 
@@ -80,7 +80,7 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 		closedList[closeSquare.Coord] = true
 		openList = removeFromOpenList(closeSquare, openList)
 		// loop through leastSquares's adjacent tiles -- call them T
-		closeNeighbours := getAdjacentCoords(closeSquare.Coord)
+		closeNeighbours := GetAdjacentCoords(closeSquare.Coord)
 
 		for _, neighbour := range closeNeighbours {
 
@@ -112,7 +112,7 @@ func Astar(BoardHeight int, BoardWidth int, MySnake api.Snake, Snakes []api.Snak
 			// 2. If T is not on the open list add it
 			for _, item := range openList {
 				if neighbour == item.Coord {
-					if squareBlocked(neighbour, Snakes) == false && onBoard(neighbour, BoardHeight, BoardWidth) {
+					if SquareBlocked(neighbour, Snakes) == false && OnBoard(neighbour, BoardHeight, BoardWidth) {
 						if (closeSquare.G+1)+Manhatten(neighbour, Destination) < item.F {
 							item.F = (closeSquare.G + 1) + Manhatten(neighbour, Destination)
 							item.G = closeSquare.G + 1

@@ -52,6 +52,17 @@ func Move(res http.ResponseWriter, req *http.Request) {
 
 	var finalMove = algorithm.Heading(decoded.You.Body[0], moveCoord[1])
 
+	// if algorithm.HeadOnCollision(moveCoord[1], decoded.Board.Snakes) {
+	// 	adjacentHead := algorithm.GetAdjacentCoords(decoded.You.Body[0])
+
+	// 	for i := 0; i < len(adjacentHead); i++ {
+	// 		if algorithm.OnBoard(adjacentHead[i], decoded.Board.Height, decoded.Board.Width) && algorithm.SquareBlocked(decoded.You.Body[0], decoded.Board.Snakes) == false {
+	// 			finalMove = algorithm.Heading(decoded.You.Body[0], adjacentHead[i])
+	// 			break
+	// 		}
+	// 	}
+	// }
+
 	respond(res, api.MoveResponse{
 		Move: finalMove,
 	})
