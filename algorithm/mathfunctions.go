@@ -83,26 +83,24 @@ func NearestFood(FoodCoords []api.Coord, You api.Coord) api.Coord {
 	return nearestFood
 }
 
-// NearestSnake determines the nearest snake on the board based on the head of the snake
-func NearestSnake(Snakes []api.Snake, You api.Snake) api.Coord {
-	var nearestSnake = Snakes[0]
-	var nearestSnakeDistance = Manhatten(Snakes[0].Body[0], You.Body[0])
-
-	if Snakes[0].Body[0] == You.Body[0] {
-		nearestSnake = Snakes[1]
-		nearestSnakeDistance = Manhatten(Snakes[1].Body[0], You.Body[0])
-	}
+// HeadOnCollision determines the nearest snake on the board based on the head of the snake
+func HeadOnCollision(Destination api.Coord, Snakes []api.Snake) bool {
+	var dangerousSnakes []api.Snake
+	destinationAdjacents := getAdjacentCoords(Destination)
 
 	for i := 0; i < len(Snakes); i++ {
-		if Manhatten(Snakes[i].Body[0], You.Body[0]) < nearestSnakeDistance {
-			if Snakes[i].Body[0] == You.Body[0] {
-				continue
+		for j := 0; j < len(destinationAdjacents); j++ {
+			if Snakes[i].Body[j] == destinationAdjacents[j] {
+				dangerousSnakes = append(dangerousSnakes, Snakes[i])
 			}
-
-			nearestSnake = Snakes[i]
-			nearestSnakeDistance = Manhatten(Snakes[i].Body[0], You.Body[0])
 		}
 	}
 
-	return nearestSnake.Body[0]
+	for i := 0; i < len(dangerousSnakes); i++ {
+		if Heading(dangerousSnakes[i].Body[0], Destination) == Heading(dangerousSnakes[i].Body[0], dangerousSnakes[i].Body[1]) {
+			return true
+		}
+	}
+
+	return false
 }
