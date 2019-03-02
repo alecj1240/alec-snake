@@ -33,12 +33,21 @@ func Move(res http.ResponseWriter, req *http.Request) {
 		log.Printf("Bad move request: %v", err)
 	}
 
+	totalSnakeLength := 0
+	for _, snake := range decoded.Board.Snakes {
+		totalSnakeLength += len(snake.Body)
+	}
+	averageSnakeLength := totalSnakeLength / len(decoded.Board.Snakes)
+
 	var moveCoord []api.Coord
 	// if there is no food chase your tail
-	if decoded.You.Health > 30 && (len(decoded.You.Body) >= 4 || len(decoded.Board.Food) == 0) {
+	if decoded.You.Health > 30 && (len(decoded.You.Body) >= averageSnakeLength && len(decoded.You.Body) >= 4 || len(decoded.Board.Food) == 0) {
 		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.ChaseTail(decoded.You.Body))
 	} else {
 		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.NearestFood(decoded.Board.Food, decoded.You.Body[0]))
+		if moveCoord == nil {
+			moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.ChaseTail(decoded.You.Body))
+		}
 	}
 
 	var finalMove = algorithm.Heading(decoded.You.Body[0], moveCoord[1])
