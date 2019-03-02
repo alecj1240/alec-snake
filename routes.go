@@ -50,8 +50,6 @@ func Move(res http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	dump(moveCoord[1])
-
 	var finalMove = algorithm.Heading(decoded.You.Body[0], moveCoord[1])
 
 	// if algorithm.HeadOnCollision(moveCoord[1], decoded.Board.Snakes, decoded.You) {
