@@ -108,5 +108,5 @@ func NearestFood(FoodCoords []api.Coord, You api.Coord) api.Coord {
 // 		}
 // 	}
 
-	return false
-}
+// 	return false
+// }
