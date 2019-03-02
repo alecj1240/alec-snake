@@ -84,23 +84,14 @@ func NearestFood(FoodCoords []api.Coord, You api.Coord) api.Coord {
 }
 
 // HeadOnCollision determines the nearest snake on the board based on the head of the snake
-func HeadOnCollision(Destination api.Coord, Snakes []api.Snake) bool {
-	var dangerousSnakes []api.Snake
+func HeadOnCollision(Destination api.Coord, Snakes []api.Snake, You api.Snake) bool {
 	destinationAdjacents := GetAdjacentCoords(Destination)
 
 	for i := 0; i < len(Snakes); i++ {
 		for j := 0; j < len(destinationAdjacents); j++ {
-			if Snakes[i].Body[0] == destinationAdjacents[j] {
-				if Snakes[i].Name != "Crutches" {
-					dangerousSnakes = append(dangerousSnakes, Snakes[i])
-				}
+			if Snakes[i].Body[0] == destinationAdjacents[j] && Snakes[i].ID != You.ID {
+				return true
 			}
-		}
-	}
-
-	for i := 0; i < len(dangerousSnakes); i++ {
-		if Heading(dangerousSnakes[i].Body[0], Destination) == Heading(dangerousSnakes[i].Body[1], dangerousSnakes[i].Body[0]) {
-			return true
 		}
 	}
 
