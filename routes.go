@@ -41,7 +41,7 @@ func Move(res http.ResponseWriter, req *http.Request) {
 
 	var moveCoord []api.Coord
 	// if there is no food chase your tail
-	if decoded.You.Health > 30 && (len(decoded.You.Body) >= averageSnakeLength && len(decoded.You.Body) >= 4 || len(decoded.Board.Food) == 0) {
+	if decoded.You.Health > 30 && ((len(decoded.You.Body) >= averageSnakeLength && len(decoded.You.Body) >= 4) || len(decoded.Board.Food) == 0) {
 		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.ChaseTail(decoded.You.Body))
 	} else {
 		moveCoord = algorithm.Astar(decoded.Board.Height, decoded.Board.Width, decoded.You, decoded.Board.Snakes, algorithm.NearestFood(decoded.Board.Food, decoded.You.Body[0]))
@@ -50,17 +50,19 @@ func Move(res http.ResponseWriter, req *http.Request) {
 		}
 	}
 
+	dump(moveCoord[1])
+
 	var finalMove = algorithm.Heading(decoded.You.Body[0], moveCoord[1])
 
-	if algorithm.HeadOnCollision(moveCoord[1], decoded.Board.Snakes, decoded.You) {
-		adjacentHead := algorithm.GetAdjacentCoords(decoded.You.Body[0])
+	// if algorithm.HeadOnCollision(moveCoord[1], decoded.Board.Snakes, decoded.You) {
+	// 	adjacentHead := algorithm.GetAdjacentCoords(decoded.You.Body[0])
 
-		for i := 0; i < len(adjacentHead); i++ {
-			if algorithm.OnBoard(adjacentHead[i], decoded.Board.Height, decoded.Board.Width) && adjacentHead[i] != moveCoord[1] && algorithm.SquareBlocked(decoded.You.Body[0], decoded.Board.Snakes) == false {
-				finalMove = algorithm.Heading(decoded.You.Body[0], adjacentHead[i])
-			}
-		}
-	}
+	// 	for i := 0; i < len(adjacentHead); i++ {
+	// 		if algorithm.OnBoard(adjacentHead[i], decoded.Board.Height, decoded.Board.Width) && adjacentHead[i] != moveCoord[1] && algorithm.SquareBlocked(decoded.You.Body[0], decoded.Board.Snakes) == false {
+	// 			finalMove = algorithm.Heading(decoded.You.Body[0], adjacentHead[i])
+	// 		}
+	// 	}
+	// }
 
 	respond(res, api.MoveResponse{
 		Move: finalMove,
